@@ -1,5 +1,7 @@
 package patmat
 
+import scala.annotation.tailrec
+
 /** A huffman code is represented by a binary tree.
   *
   * Every `Leaf` node of the tree represents one character of the alphabet that the tree can encode.
@@ -112,17 +114,27 @@ trait Huffman extends HuffmanInterface:
     * In such an invocation, `until` should call the two functions until the list of code trees
     * contains only one single tree, and then return that singleton list.
     */
+
   def until(
       done: List[CodeTree] => Boolean,
       merge: List[CodeTree] => List[CodeTree]
-  )(trees: List[CodeTree]): List[CodeTree] = ???
+  )(trees: List[CodeTree]): List[CodeTree] =
+    def tTrees(trees: List[CodeTree], acc: List[CodeTree]): List[CodeTree] =
+      if done(trees) then acc
+      else
+        trees match
+          case x :: y :: list => tTrees(trees.tail, merge(List(x, y)))
+          case _              => trees
+    tTrees(trees, Nil)
 
   /** This function creates a code tree which is optimal to encode the text `chars`.
     *
     * The parameter `chars` is an arbitrary text. This function extracts the character frequencies
     * from that text and creates a code tree based on them.
     */
-  def createCodeTree(chars: List[Char]): CodeTree = ???
+  def createCodeTree(chars: List[Char]): CodeTree = 
+    
+    ???
 
   // Part 3: Decoding
 
