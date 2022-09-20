@@ -85,8 +85,21 @@ trait Huffman extends HuffmanInterface:
     *
     * If `trees` is a list of less than two elements, that list should be returned unchanged.
     */
+
+  private def getWeight(x: CodeTree, y: CodeTree): Int = (x, y) match
+    case (Leaf(_, w1), Leaf(_, w2))             => w1 + w2
+    case (Leaf(_, w1), Fork(_, _, _, w2))       => w1 + w2
+    case (Fork(_, _, _, w1), Leaf(_, w2))       => w1 + w2
+    case (Fork(_, _, _, w1), Fork(_, _, _, w2)) => w1 + w2
+
+  private def getChars(x: CodeTree, y: CodeTree): List[Char] = (x, y) match
+    case (Leaf(c1, _), Leaf(c2, _))             => List(c1, c2)
+    case (Leaf(c1, _), Fork(_, _, c2, _))       => List(c1) ++ c2
+    case (Fork(_, _, c1, _), Leaf(c2, _))       => c1 ++ List(c2)
+    case (Fork(_, _, c1, _), Fork(_, _, c2, _)) => c1 ++ c2
+
   def combine(trees: List[CodeTree]): List[CodeTree] = trees match
-    case x :: y :: list => List(Fork(x, y, ???, ???)) ++ list
+    case x :: y :: list => List(Fork(x, y, getChars(x, y), getWeight(x, y))) ++ list
     case _              => trees
 
   /** This function will be called in the following way:
