@@ -107,13 +107,9 @@ trait Huffman extends HuffmanInterface:
       done: List[CodeTree] => Boolean,
       merge: List[CodeTree] => List[CodeTree]
   )(trees: List[CodeTree]): List[CodeTree] =
-    def tTrees(trees: List[CodeTree], acc: List[CodeTree]): List[CodeTree] =
-      if done(trees) then acc
-      else
-        trees match
-          case x :: y :: list => tTrees(list, merge(List(x, y)) ++ acc)
-          case _              => acc
-    tTrees(trees, Nil)
+    @tailrec def tTrees(trees: List[CodeTree]): List[CodeTree] =
+      if done(trees) then trees else tTrees(merge(trees))
+    tTrees(trees)
 
   /** This function creates a code tree which is optimal to encode the text `chars`.
     *
@@ -121,12 +117,7 @@ trait Huffman extends HuffmanInterface:
     * from that text and creates a code tree based on them.
     */
   def createCodeTree(chars: List[Char]): CodeTree =
-    val test = until(singleton, combine)(makeOrderedLeafList(times(chars)))
-    // until(singleton, combine)(makeOrderedLeafList(times(chars)))(0)
-    println(s"[MAIN] ${test}")
-    println(s"[MAIN test(0)] ${test(0)}")
-
-    test(0)
+    until(singleton, combine)(makeOrderedLeafList(times(chars)))(0)
 
   // Part 3: Decoding
 

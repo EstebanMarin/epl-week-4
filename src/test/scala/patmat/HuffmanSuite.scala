@@ -45,10 +45,71 @@ class HuffmanSuite extends munit.FunSuite:
     )
   }
 
+  test("combine again arrive to a single value") {
+    val leaflist = List(Fork(Leaf('e', 1), Leaf('t', 2), List('e', 't'), 3), Leaf('x', 4))
+    assertEquals(
+      combine(leaflist),
+      List(
+        Fork(
+          Fork(Leaf('e', 1), Leaf('t', 2), List('e', 't'), 3),
+          Leaf('x', 4),
+          List('e', 't', 'x'),
+          7
+        )
+      )
+    )
+  }
+
+  test("combine a singleton arrive to the same") {
+    val leaflist = List(
+      Fork(
+        Fork(Leaf('e', 1), Leaf('t', 2), List('e', 't'), 3),
+        Leaf('x', 4),
+        List('e', 't', 'x'),
+        7
+      )
+    )
+    assertEquals(
+      combine(leaflist),
+      List(
+        Fork(
+          Fork(Leaf('e', 1), Leaf('t', 2), List('e', 't'), 3),
+          Leaf('x', 4),
+          List('e', 't', 'x'),
+          7
+        )
+      )
+    )
+  }
+
+  test("test Until") {
+    val leaflist: List[Leaf] = List(Leaf('e', 1), Leaf('t', 2), Leaf('x', 4))
+    val test: List[CodeTree] = until(singleton, combine)(leaflist)
+    assertEquals(test.size, 1)
+    assertEquals(
+      test,
+      List(
+        Fork(
+          Fork(Leaf('e', 1), Leaf('t', 2), List('e', 't'), 3),
+          Leaf('x', 4),
+          List('e', 't', 'x'),
+          7
+        )
+      )
+    )
+  }
+
   test("createCodeTree") {
-    val listChar = string2Chars("Testings a betteer String more data")
-    println(s" [createCodeTree] ${createCodeTree(listChar)}")
-    assertEquals('e', 'e')
+    val codeTree = createCodeTree(string2Chars("ettxxxx"))
+    assertEquals(
+      codeTree,
+      Fork(
+        Fork(Leaf('e', 1), Leaf('t', 2), List('e', 't'), 3),
+        Leaf('x', 4),
+        List('e', 't', 'x'),
+        7
+      )
+    )
   }
 
   // test("decode and encode a very short text should be identity (10pts)") {
