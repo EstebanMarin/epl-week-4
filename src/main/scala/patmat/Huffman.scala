@@ -128,13 +128,13 @@ trait Huffman extends HuffmanInterface:
     */
 
   def decode(tree: CodeTree, bits: List[Bit]): List[Char] =
-    def traBits(treeT: CodeTree, bitsT: List[Bit], acc: List[Char]): List[Char] =
-        (treeT, bitsT) match
-          case (Fork(lT: CodeTree, rT: CodeTree, list: List[Char], w: Int), bit :: xs) =>
-            if bit == 0 then traBits(lT, xs, acc) else traBits(rT, xs, acc)
-          case (Leaf(c: Char, _), l) =>
-            traBits(tree, l, acc :+ c)
-          case _ => acc
+    @tailrec def traBits(treeT: CodeTree, bitsT: List[Bit], acc: List[Char]): List[Char] =
+      (treeT, bitsT) match
+        case (Fork(lT: CodeTree, rT: CodeTree, list: List[Char], w: Int), bit :: xs) =>
+          if bit == 0 then traBits(lT, xs, acc) else traBits(rT, xs, acc)
+        case (Leaf(c: Char, _), l) =>
+          traBits(tree, l, acc :+ c)
+        case _ => acc
     traBits(tree, bits, Nil)
 
   /** A Huffman coding tree for the French language. Generated from the data given at
@@ -249,8 +249,19 @@ trait Huffman extends HuffmanInterface:
 
   /** This function encodes `text` using the code tree `tree` into a sequence of bits.
     */
-  def encode(tree: CodeTree)(text: List[Char]): List[Bit] = ???
+  def encode(tree: CodeTree)(text: List[Char]): List[Bit] =
+    def rec(treeT: CodeTree, text: List[Char], acc: List[Bit]): List[Bit] = (treeT, text) match
+      case (Fork(lT: CodeTree, rT: CodeTree, list: List[Char], w: Int), c :: txs) =>
+        rec(lT, txs, acc :+ 0)
+        rec(rT, txs, acc :+ 1)
+      case (Leaf(char: Char, _), c :: txs) =>
+        if c == char then acc else Nil
+      case _ =>
+        acc
+    rec(tree, text, Nil)
 
+  val hullfman = List('h', 'u', 'f', 'f', 'm', 'a', 'n', 'e', 's', 't', 'c', 'o', 'o', 'l')
+  def encodedSecret: List[Bit] = encode(frenchCode)(hullfman)
   // Part 4b: Encoding using code table
 
   type CodeTable = List[(Char, List[Bit])]
