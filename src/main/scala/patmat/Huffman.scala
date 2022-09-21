@@ -129,13 +129,11 @@ trait Huffman extends HuffmanInterface:
 
   def decode(tree: CodeTree, bits: List[Bit]): List[Char] =
     def traBits(treeT: CodeTree, bitsT: List[Bit], acc: List[Char]): List[Char] =
-      if bitsT.isEmpty then acc
-      else
         (treeT, bitsT) match
           case (Fork(lT: CodeTree, rT: CodeTree, list: List[Char], w: Int), bit :: xs) =>
             if bit == 0 then traBits(lT, xs, acc) else traBits(rT, xs, acc)
-          case (Leaf(c: Char, _), x :: xs) =>
-            traBits(tree, xs, c +: acc)
+          case (Leaf(c: Char, _), l) =>
+            traBits(tree, l, acc :+ c)
           case _ => acc
     traBits(tree, bits, Nil)
 
