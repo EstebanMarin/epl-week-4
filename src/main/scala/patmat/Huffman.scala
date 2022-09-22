@@ -251,7 +251,7 @@ trait Huffman extends HuffmanInterface:
   def encodingT(tree: CodeTree, char: Char): List[Bit] =
     def traTree(t: CodeTree, stack: List[Bit]): List[Bit] = t match
       case Fork(l: CodeTree, r: CodeTree, _, _) =>
-        traTree(r, stack :+ 0) ::: traTree(l, stack :+ 1)
+        traTree(r, stack :+ 1) ::: traTree(l, stack :+ 0)
       case Leaf(c: Char, _) =>
         if c == char then stack else Nil
     traTree(tree, Nil)
@@ -259,7 +259,9 @@ trait Huffman extends HuffmanInterface:
   /** This function encodes `text` using the code tree `tree` into a sequence of bits. //
     */
   def encode(tree: CodeTree)(text: List[Char]): List[Bit] =
-    def textT(text: List[Char], encodedMessage: List[Bit]): List[Bit] = ???
+    def textT(t: List[Char], encodedMessage: List[Bit]): List[Bit] =
+      if t.isEmpty then encodedMessage
+      else textT(t.tail, encodedMessage ++ encodingT(tree, t.head))
     textT(text, Nil)
 
   val hullfman = List('h', 'u', 'f', 'f', 'm', 'a', 'n', 'e', 's', 't', 'c', 'o', 'o', 'l')
