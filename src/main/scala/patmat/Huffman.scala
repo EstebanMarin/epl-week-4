@@ -249,29 +249,18 @@ trait Huffman extends HuffmanInterface:
   // Part 4a: Encoding using Huffman tree
 
   def encodingT(tree: CodeTree, char: Char): List[Bit] =
-    var dict: Map[Char, List[Bit]] = Map.empty
     def traTree(t: CodeTree, stack: List[Bit]): List[Bit] = t match
       case Fork(l: CodeTree, r: CodeTree, _, _) =>
-        traTree(r, 0 +: stack)
-        traTree(l, 1 +: stack)
+        traTree(r, stack :+ 0) ::: traTree(l, stack :+ 1)
       case Leaf(c: Char, _) =>
-        println(s"[LEAF] => $c => $stack")
-        dict + (c -> stack)
-        stack
+        if c == char then stack else Nil
     traTree(tree, Nil)
 
   /** This function encodes `text` using the code tree `tree` into a sequence of bits. //
     */
   def encode(tree: CodeTree)(text: List[Char]): List[Bit] =
-    def rec(treeT: CodeTree, text: List[Char], acc: List[Bit]): List[Bit] = (treeT, text) match
-      case (Fork(lT: CodeTree, rT: CodeTree, list: List[Char], w: Int), c :: txs) =>
-        rec(lT, txs, acc :+ 0)
-        rec(rT, txs, acc :+ 1)
-      case (Leaf(char: Char, _), c :: txs) =>
-        if c == char then acc else Nil
-      case _ =>
-        acc
-    rec(tree, text, Nil)
+    def textT(text: List[Char], encodedMessage: List[Bit]): List[Bit] = ???
+    textT(text, Nil)
 
   val hullfman = List('h', 'u', 'f', 'f', 'm', 'a', 'n', 'e', 's', 't', 'c', 'o', 'o', 'l')
   def encodedSecret: List[Bit] = encode(frenchCode)(hullfman)

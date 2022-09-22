@@ -122,8 +122,9 @@ class HuffmanSuite extends munit.FunSuite:
 
   test("helper function traverse tree") {
     new TestTrees:
-      println(encodingT(t2, 'd'))
       assertEquals(encodingT(t2, 'a'), List(1, 1))
+      assertEquals(encodingT(t2, 'b'), List(1, 0))
+      assertEquals(encodingT(t2, 'd'), List(0))
   }
 
   // test("Encoded message") {
