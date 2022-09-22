@@ -1,6 +1,7 @@
 package patmat
 
 import scala.annotation.tailrec
+import scala.collection.mutable.Stack
 
 /** A huffman code is represented by a binary tree.
   *
@@ -247,7 +248,19 @@ trait Huffman extends HuffmanInterface:
 
   // Part 4a: Encoding using Huffman tree
 
-  /** This function encodes `text` using the code tree `tree` into a sequence of bits.
+  def encodingT(tree: CodeTree, char: Char): List[Bit] =
+    var dict: Map[Char, List[Bit]] = Map.empty
+    def traTree(t: CodeTree, stack: List[Bit]): List[Bit] = t match
+      case Fork(l: CodeTree, r: CodeTree, _, _) =>
+        traTree(r, 0 +: stack)
+        traTree(l, 1 +: stack)
+      case Leaf(c: Char, _) =>
+        println(s"[LEAF] => $c => $stack")
+        dict + (c -> stack)
+        stack
+    traTree(tree, Nil)
+
+  /** This function encodes `text` using the code tree `tree` into a sequence of bits. //
     */
   def encode(tree: CodeTree)(text: List[Char]): List[Bit] =
     def rec(treeT: CodeTree, text: List[Char], acc: List[Bit]): List[Bit] = (treeT, text) match
